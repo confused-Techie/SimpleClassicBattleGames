@@ -1,0 +1,9 @@
+{{template "head" . }}
+
+<body>
+{{ range .Data.GameEntry }}
+  <p><a href="{{ .Link }}?game=new" >{{ .Title }}</a></p>
+{{end}}
+
+</body>
+</html>
