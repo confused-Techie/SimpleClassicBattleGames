@@ -1,0 +1,12 @@
+[
+{
+"username": "admin",
+"passhash": "$2a$15$LnUicBW0CxkCJUaSfE8X0OD1i9904U.ToN/f0aWU.30iji/8meH7W",
+"createdat": "2022-04-19 22:06:48.4112924 -0700 PDT m=+18.272983201"
+},
+{
+"username": "firefox",
+"passhash": "$2a$15$db8FXuA1W8Tt5Y11MT2ZVuElbzLOzV7mJG/73Bm4jnyn2NLB2jFK.",
+"createdat": "2022-04-19 22:11:33.4298345 -0700 PDT m=+70.446871801"
+}
+]

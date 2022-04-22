@@ -6,6 +6,7 @@ import (
   "fmt"
   models "github.com/confused-Techie/SimpleClassicBattleGames/src/pkg/models"
   games "github.com/confused-Techie/SimpleClassicBattleGames/src/pkg/games"
+  users "github.com/confused-Techie/SimpleClassicBattleGames/src/pkg/users"
 )
 
 var tmpl = make(map[string]*template.Template)
@@ -53,46 +54,79 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
   StandardPageError(templateError)
 }
 
-func SquaresSquares4Handler(w http.ResponseWriter, r *http.Request) {
-  gameID := ObtainGameID(r)
+func SignInHandler(w http.ResponseWriter, r *http.Request) {
+  if r.Method == "POST" {
+    // Parse our multipart form, 10 << 20 specifies a maximum upload of 10 MB files.
+    r.ParseForm()
 
-  errFunc := func() {
-    errorPage(w, r, gameID)
-  }
+    user := r.Form["username"][0] // we only care about the first found valid instance
+    pass := r.Form["password"][0]
 
-  newFunc := func() {
-    newGameID := games.CreateGameID()
-    fmt.Println("New Squares & Squares 4 created with: "+newGameID)
+    // now with the user we can check if they are a valid user.
+    success, signInMsg := users.AttemptSignIn(user, pass)
 
-    // now to actually create the progress file.
-    createRes := games.CreateGameProgress(gameID, "squares-sqaures4", "playerone")
-    if createRes != "Success" {
-      erroPage(w, r, "Unable to create Game Progress File Successfully: "+createRes)
+    if success {
+      // since the sign in was successful we want to add the cookies and redirect
+      userDetails := users.GetUserDetails(user)
+
+      CreateSignInCookie(userDetails.UserName, w)
+
+      http.Redirect(w, r, "/", http.StatusSeeOther)
+    } else {
+      // with a bad sign in we need to respond.
+      http.Redirect(w, r, "/sign-in?sign-in-error="+signInMsg, http.StatusSeeOther)
     }
-    
-    http.Redirect(w, r, "/squares-squares4?game="+newGameID, http.StatusSeeOther)
-  }
 
-  defaultFunc := func() {
-    gameEntry := games.GetGameEntry("squares-squares4")
-
+  } else {
+    fmt.Println("Header during Get", r.Header.Get("SignInMsg"))
+    // For GET Requests.
     data := models.PageTemplate{
-      Title: gameEntry.Title,
-      GameRules: gameEntry.Rules,
+      Title: "SimpleClassicBattleGames - Sign In",
+      SpecialMsg: GetSignInMsg(r),
     }
 
     templateArray := []string{
-      returnTemplate("game.go.html"),
+      returnTemplate("signin.go.html"),
       returnSubTemplate("head.go.html"),
     }
 
-    tmpl["squares-squares4.html"] = template.Must(template.ParseFiles(templateArray...))
+    tmpl["signin.html"] = template.Must(template.ParseFiles(templateArray...))
 
-    templateError := tmpl["squares-squares4.html"].Execute(w, data)
+    templateError := tmpl["signin.html"].Execute(w, data)
     StandardPageError(templateError)
-
   }
+}
 
-  DetermineGameState(gameID, errFunc, newFunc, defaultFunc)
+func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+  if r.Method == "POST" {
+    r.ParseForm()
 
+    user := r.Form["username"][0]
+    pass := r.Form["password"][0]
+
+    success, rtrn := users.CreateUser(user, pass)
+
+    if success {
+      CreateSignInCookie(user, w)
+      http.Redirect(w, r, "/", http.StatusSeeOther)
+    } else {
+      http.Redirect(w, r, "/create-user?create-user-error="+rtrn, http.StatusSeeOther)
+
+    }
+  } else {
+    data := models.PageTemplate{
+      Title: "SimpleClassicBattleGames - Create User",
+      SpecialMsg: GetCreateUserMsg(r),
+    }
+
+    templateArray := []string{
+      returnTemplate("createuser.go.html"),
+      returnSubTemplate("head.go.html"),
+    }
+
+    tmpl["createuser.html"] = template.Must(template.ParseFiles(templateArray...))
+
+    templateError := tmpl["createuser.html"].Execute(w, data)
+    StandardPageError(templateError)
+  }
 }

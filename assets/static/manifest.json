@@ -1,0 +1,9 @@
+{
+  "short_name": "Battle Games",
+  "name": "Short Classic Battle Games",
+  "start_url": "/",
+  "background_color": "#3367D6",
+  "display": "minimal-ui",
+  "scope": "/",
+  "theme_color": "#3366D6"
+}

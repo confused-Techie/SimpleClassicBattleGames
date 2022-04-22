@@ -7,6 +7,7 @@ import (
 type PageTemplate struct {
   Title string
   GameRules string
+  SpecialMsg string
   Theme string
   CSS []string
   JS []string
@@ -33,9 +34,20 @@ type GameProgressEntry struct {
   PlayerOne string `json:"playerone"`
   PlayerTwo string `json:"playertwo"`
   Turn string `json:"turn"`
+  Winner string `json:"winner"`
   Board interface{} `json:"board"`
 }
 
 type GameProgressCollection struct {
   GameProgressEntry []*GameProgressEntry
+}
+
+type UserEntry struct {
+  UserName string `json:"username"`
+  PassHash string `json:"passhash"`
+  CreatedAt string `json:"createdat"`
+}
+
+type UserCollection struct {
+  UserEntry []*UserEntry
 }
