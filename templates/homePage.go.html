@@ -1,9 +1,15 @@
-{{template "head" . }}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="SimpleClassicBattleGames - A Collection of multiplayer Simple Classic Games.">
+  <meta name="viewport" content="width=device-width">
+  <title>{{ .Title }}</title>
+
+  <link rel="manifest" href="/manifest.json">
+
+</head>
 
 <body>
-{{ range .Data.GameEntry }}
-  <p><a href="{{ .Link }}?game=new" >{{ .Title }}</a></p>
-{{end}}
-
+  <p>This is SimpleClassicBattleGames Version 2</p>
 </body>
 </html>
